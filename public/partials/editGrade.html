@@ -1,0 +1,99 @@
+<style>
+    table, th, td {
+        border: 1px solid grey;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    table tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+</style>
+
+<div ng-app = "Grade" ng-controller = "EditCtrl">
+	<h1>Edit Grade</h1>
+    <h2>{{account.fullname}}</h2>
+    <h3>CSCE 235</h3>
+    <i><u><b>Note:</b></u> "-1" indicates missing grade</i>
+    <table border = "0">
+        <tr>
+            <td>Homework 1</td>
+            <td><input type = "text" value = {{account.hw1}} ng-model = "account.hw1"></input></td>
+        </tr>
+        <tr>
+            <td>Homework 2</td>
+            <td><input type = "text" value = {{account.hw2}} ng-model = "account.hw2"></input></td>
+        </tr>
+        <tr>
+            <td>Homework 3</td>
+            <td><input type = "text" value = {{account.hw3}} ng-model = "account.hw3"></input></td>
+        </tr>
+        <tr>
+            <td>Homework 4</td>
+            <td><input type = "text" value = {{account.hw4}} ng-model = "account.hw4"></input></td>
+        </tr>
+        <tr>
+            <td>Homework 5</td>
+            <td><input type = "text" value = {{account.hw5}} ng-model = "account.hw5"></input></td>
+        </tr>
+        <tr>
+            <td>Homework 6</td>
+            <td><input type = "text" value = {{account.hw6}} ng-model = "account.hw6"></input></td>
+        </tr>
+        <tr>
+            <td>Quiz 1</td>
+            <td><input type = "text" value = {{account.q1}} ng-model = "account.q1"></input></td>
+        </tr>
+        <tr>
+            <td>Quiz 2</td>
+            <td><input type = "text" value = {{account.q2}} ng-model = "account.q2"></input></td>
+        </tr>
+        <tr>
+            <td>Quiz 3</td>
+            <td><input type = "text" value = {{account.q3}} ng-model = "account.q3"></input></td>
+        </tr>
+        <tr>
+            <td>Quiz 4</td>
+            <td><input type = "text" value = {{account.q4}} ng-model = "account.q4"></input></td>
+        </tr>
+        <tr>
+            <td>Quiz 5</td>
+            <td><input type = "text" value = {{account.q5}} ng-model = "account.q5"></input></td>
+        </tr>
+        <tr>
+            <td>Quiz 6</td>
+            <td><input type = "text" value = {{account.q6}} ng-model = "account.q6"></input></td>
+        </tr>
+        <tr>
+            <td>Quiz 7</td>
+            <td><input type = "text" value = {{account.q7}} ng-model = "account.q7"></input></td>
+        </tr>
+        <tr>
+            <td>Quiz 8</td>
+            <td><input type = "text" value = {{account.q8}} ng-model = "account.q8"></input></td>
+        </tr>
+        <tr>
+            <td>Quiz 9</td>
+            <td><input type = "text" value = {{account.q9}} ng-model = "account.q9"></input></td>
+        </tr>
+        <tr>
+            <td>Quiz 10</td>
+            <td><input type = "text" value = {{account.q10}} ng-model = "account.q10"></input></td>
+        </tr>
+        <tr>
+            <td>Midterm Exam</td>
+            <td><input type = "text" value = {{account.midterm}} ng-model = "account.midterm"></input></td>
+        </tr>
+        <tr>
+            <td>Final Exam</td>
+            <td><input type = "text" value = {{account.final}} ng-model = "account.final"></input></td>
+        </tr>
+    </table>
+    <br>
+    <input type = "button" class = "btn btn-primary" value = "Update" ng-click = "update()"/>
+    <a href = "/#/viewGrade/{{account.username}}" class = "btn btn-default">No, Go Back</a>
+</div>

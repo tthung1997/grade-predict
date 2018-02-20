@@ -1,0 +1,99 @@
+<style>
+    table, th, td {
+        border: 1px solid grey;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    table tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+</style>
+
+<div ng-app = "Grade" ng-controller = "ViewCtrl">
+    <h1>{{account.fullname}}</h1>
+    <h2>CSCE 235</h2>
+    <table border = "0">
+        <tr>
+            <td>Homework 1</td>
+            <td>{{account.hw1}}</td>
+        </tr>
+        <tr>
+            <td>Homework 2</td>
+            <td>{{account.hw2}}</td>
+        </tr>
+        <tr>
+            <td>Homework 3</td>
+            <td>{{account.hw3}}</td>
+        </tr>
+        <tr>
+            <td>Homework 4</td>
+            <td>{{account.hw4}}</td>
+        </tr>
+        <tr>
+            <td>Homework 5</td>
+            <td>{{account.hw5}}</td>
+        </tr>
+        <tr>
+            <td>Homework 6</td>
+            <td>{{account.hw6}}</td>
+        </tr>
+        <tr>
+            <td>Quiz 1</td>
+            <td>{{account.q1}}</td>
+        </tr>
+        <tr>
+            <td>Quiz 2</td>
+            <td>{{account.q2}}</td>
+        </tr>
+        <tr>
+            <td>Quiz 3</td>
+            <td>{{account.q3}}</td>
+        </tr>
+        <tr>
+            <td>Quiz 4</td>
+            <td>{{account.q4}}</td>
+        </tr>
+        <tr>
+            <td>Quiz 5</td>
+            <td>{{account.q5}}</td>
+        </tr>
+        <tr>
+            <td>Quiz 6</td>
+            <td>{{account.q6}}</td>
+        </tr>
+        <tr>
+            <td>Quiz 7</td>
+            <td>{{account.q7}}</td>
+        </tr>
+        <tr>
+            <td>Quiz 8</td>
+            <td>{{account.q8}}</td>
+        </tr>
+        <tr>
+            <td>Quiz 9</td>
+            <td>{{account.q9}}</td>
+        </tr>
+        <tr>
+            <td>Quiz 10</td>
+            <td>{{account.q10}}</td>
+        </tr>
+        <tr>
+            <td>Midterm Exam</td>
+            <td>{{account.midterm}}</td>
+        </tr>
+        <tr>
+            <td>Final Exam</td>
+            <td>{{account.final}}</td>
+        </tr>
+    </table>
+    Predicted Group: <strong><font id = "predict"></font></strong><br>
+    You are having <b>{{total}}%/{{available}}%</b>.<br>
+    <a href = "/#/editGrade/{{account.username}}" class = "btn btn-primary">Edit</a>
+    <a href = "/#/" class = "btn btn-default">Logout</a>
+</div>
+

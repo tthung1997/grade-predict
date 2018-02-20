@@ -1,0 +1,18 @@
+<h1>Login</h1>
+
+<p>
+    {{message}}
+</p>
+
+<form>
+    <div class = "form-group">
+        <label>Username</label>
+        <input class = "form-control" ng-model = "username"></input>
+    </div>
+    <div class = "form-group">
+        <label>Password</label>
+        <input class = "form-control" type = "password" ng-model = "password"></input>
+    </div>
+    <input type = "button" class = "btn btn-primary" value = "Login" ng-click = "validate()"></input>
+    <a href = "/#/register" class = "btn btn-primary">Register</a>
+</form>
