@@ -1,0 +1,20 @@
+1. Folder public:
+-----------------
+    a. Folder javascripts: contains grade.js including all controllers for all routes.
+    b. Folder partials: contains all .html files
+        - home.html: login page
+        - register.html: register page
+        - viewGrade.html: view Grade of student
+        - editGrade.html: edit Grade (for testing purpose)
+        - uploadGrade.html: upload Grade file (for Professor only - still in progress).
+
+2. Folder routes:
+-----------------
+    - accounts.js: contains all router's GET/POST methods (including creating child-process for python script).
+
+3. Folder ml_scripts:
+---------------------
+    - predict.py: python code which uses 2 models (lr and nb) to generate prediction.
+    - lr.pkl: logistic regression model
+    - nb.pkl: naive bayes model
+
