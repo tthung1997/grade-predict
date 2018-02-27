@@ -7,7 +7,8 @@ app.config(['$routeProvider', function($routeProvider) {
         controller: 'LoginCtrl'
     })
     .when('/register', {
-        templateUrl: 'partials/register.html'
+        templateUrl: 'partials/register.html',
+        controller: 'RegisterCtrl'
     })
     .when('/uploadGrade', {
         templateUrl: 'partials/uploadGrade.html'
@@ -44,6 +45,54 @@ app.controller('LoginCtrl', ['$scope', '$resource', '$location',
                     $scope.message = "Wrong credential!";
                 }
             });
+        }
+    }
+]);
+
+app.controller('RegisterCtrl', ['$scope', '$resource', '$location', 
+    function($scope, $resource, $location) {
+        $scope.correctCode = "";
+        $scope.confirmed = false;
+        $scope.sendEmail = function() {
+            $scope.message = "";
+            $scope.email = $scope.email == undefined ? "" : $scope.email;
+            if (($scope.email).trim() == "") {
+                $scope.message = "You have to enter your email to receive confirmation code.";
+                return;
+            }
+            var Email = $resource('/register');
+            Email.save({email: $scope.email}, function(data) {
+                $scope.correctCode = data.code;
+            });
+        }
+        $scope.verify = function() {
+            $scope.message = "";
+            if ($scope.correctCode == "") {
+                $scope.message = "The confirmation code has not been generated.";
+                return;
+            }
+            if (($scope.confirmCode).trim() == $scope.correctCode) {
+                $scope.confirmed = true;
+                $scope.message = "Email confirmed!";
+            } else {
+                $scope.message = "Incorrect code!";
+            }
+        }
+        $scope.reset = function() {
+            document.getElementById("registerForm").reset();
+            $scope.message = "";
+        }
+        $scope.regist = function() {
+            if (!$scope.confirmed) {
+                $scope.message = "Your email has not been confirmed yet!";
+                return;
+            }
+            if ($scope.password != $scope.rpassword) {
+                $scope.message = "Password does not match!";
+                return;
+            }
+            alert("You have successfully registered!\nYou will be redirected to the login page.");
+            $location.path("/");
         }
     }
 ]);

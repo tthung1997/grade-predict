@@ -4,7 +4,7 @@
     {{message}}
 </p>
 
-<form>
+<form id = "registerForm">
     <div class = "form-group">
         <label>Role</label><br>
         <input class = "radio-inline" type = "radio" name = "optradio" ng-model = "role"> Professor </input>
@@ -20,7 +20,21 @@
     </div>
     <div class = "form-group">
         <label>Email address</label>
-        <input class = "form-control" type = "email" ng-model = "email"></input>
+        <div class = "input-group">
+            <input class = "form-control" type = "email" ng-model = "email">
+            <span class = "input-group-btn">
+                <input type = "button" class = "btn" value = "Send confirmation code" ng-click = "sendEmail()"></input>
+            </span>
+        </div>
+    </div>
+    <div class = "form-group">
+        <label>Confirmation code</label>
+        <div class = "input-group">
+            <input class = "form-control" ng-model = "confirmCode">
+            <span class = "input-group-btn">
+                <input type = "button" class = "btn" value = "Verify" ng-click = "verify()"></input>
+            </span>
+        </div>
     </div>
     <div class = "form-group">
         <label>Username</label>
@@ -34,7 +48,7 @@
         <label>Re-enter password</label>
         <input class = "form-control" type = "password" ng-model = "rpassword"></input>
     </div>
-    <input type = "button" class = "btn btn-primary" value = "Register"></input>
-    <input type = "button" class = "btn btn-default" value = "Reset"></input>
+    <input type = "button" class = "btn btn-primary" value = "Register" ng-click = "regist()"></input>
+    <input type = "button" class = "btn btn-default" value = "Reset" ng-click = "reset()"></input>
     <a href = "/#/" class = "btn btn-default">Back</a>
 </form>
