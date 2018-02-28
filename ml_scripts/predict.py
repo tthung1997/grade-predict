@@ -17,8 +17,8 @@ def read_in():
 
 def main():
     X = read_in()
-    lr = joblib.load('ml_scripts/lr.pkl') 
-    nb = joblib.load('ml_scripts/nb.pkl')
+    lr = joblib.load('ml_scripts/models/lr.pkl') 
+    nb = joblib.load('ml_scripts/models/nb.pkl')
     res = min(lr.predict(X)[0], nb.predict(X)[0])
     print(res, end='', flush=True)
 

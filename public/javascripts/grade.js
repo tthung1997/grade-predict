@@ -10,8 +10,13 @@ app.config(['$routeProvider', function($routeProvider) {
         templateUrl: 'partials/register.html',
         controller: 'RegisterCtrl'
     })
-    .when('/uploadGrade', {
-        templateUrl: 'partials/uploadGrade.html'
+    .when('/profProfile', {
+        templateUrl: 'partials/profProfile.html',
+        controller: 'ProfileCtrl'
+    })
+    .when('/uploadGrade/:course', {
+        templateUrl: 'partials/uploadGrade.html',
+        controller: 'UploadCtrl'
     })
     .when('/viewGrade/:username', {
         templateUrl: 'partials/viewGrade.html',
@@ -97,10 +102,33 @@ app.controller('RegisterCtrl', ['$scope', '$resource', '$location',
     }
 ]);
 
+app.controller('ProfileCtrl', ['$scope', '$resource', '$location',
+    function($scope, $resource, $location) {
+        var Model = $resource('/createModels');
+        Model.save(function(data) {
+            console.log(data.text);
+        });
+        $scope.upload = function() {
+            $location.path('/uploadGrade/' + $scope.course);
+        }
+    }
+]);
+
+app.controller('UploadCtrl', ['$scope', '$routeParams', 
+    function($scope, $routeParams) {
+        var str = $routeParams.course;
+        $scope.course = str.toUpperCase();
+    }
+]);
+
 app.controller('ViewCtrl', ['$scope', '$resource', '$routeParams',
     function($scope, $resource, $routeParams) {
         var Account = $resource('/api/accounts/:username');
         Account.get({username: $routeParams.username}, function(account) {
+            var Params = $resource('/createModels');
+            Params.get(function(data) {
+                console.log(data.params.split(","));
+            });
             $scope.account = account;
             if ($scope.account.hw1 == -1) {
                 $scope.account.hw1 = "--";

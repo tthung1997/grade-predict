@@ -1,21 +1,10 @@
-<h1>Upload grade</h1>
+<h1>Upload grade for {{course}}</h1>
 
-<p>
-    {{message}}
-</p>
-
-<form>
-    <div class = "form-group">
-        <label>Select course</label>
-        <select class = "form-control" ng-model = "course">
-            <option>CSCE 156</option>
-            <option>CSCE 235</option>
-        </select>
-    </div>
+<form action = "/upload" enctype = "multipart/form-data" method = "POST">
     <div class = "form-group">
         <label>Grade file</label>
-        <input class = "form-control" type = "file" ng-model = "gradeFile" accept = ".csv"></input>
+        <input class = "form-control" type = "file" ng-model = "gradeFile" accept = ".csv" name = "csvfile"></input>
     </div>
-    <input type = "button" class = "btn btn-primary" value = "Upload"></input>
+    <input type = "submit" class = "btn btn-primary" value = "Upload"></input>
     <a href = "/#/" class = "btn btn-default">Logout</a>
 </form>
