@@ -1,6 +1,6 @@
 <h1>Upload grade for {{course}}</h1>
 
-<form action = "/upload" enctype = "multipart/form-data" method = "POST">
+<form action = "/api/models/upload" enctype = "multipart/form-data" method = "POST">
     <div class = "form-group">
         <label>Grade file</label>
         <input class = "form-control" type = "file" ng-model = "gradeFile" accept = ".csv" name = "csvfile"></input>

@@ -14,9 +14,12 @@ router.get('/', function(req, res) {
 
 router.get('/:username', function(req, res) {
     var collection = db.get('accounts');
-    collection.findOne({ username: req.params.username }, function(err, account) {
+    collection.findOne({ Username: req.params.username }, function(err, account) {
         if (err) throw err;
-        var uint8arrayToString = function(data) {
+        if (account == null) {
+			return res.json({});
+		}
+		var uint8arrayToString = function(data) {
             return String.fromCharCode.apply(null, data);
         };
         const spawn = require('child_process').spawn;
@@ -45,6 +48,43 @@ router.get('/:username', function(req, res) {
     });
 });
 
+router.get('/:nuid', function(req, res) {
+    var collection = db.get('accounts');
+    collection.findOne({ NUID: req.params.nuid }, function(err, account) {
+        if (err) throw err;
+        if (account == null) {
+			return res.json({});
+		}
+		var uint8arrayToString = function(data) {
+            return String.fromCharCode.apply(null, data);
+        };
+        const spawn = require('child_process').spawn;
+		const ls = spawn('python3', ['ml_scripts/predict.py', 
+			account.q1,
+			account.q2,
+			account.q3,
+			account.hw1,
+			account.hw2,
+			account.hw3,
+			account.midterm,
+		]);
+
+		ls.stdout.on('data', (data) => {
+			account.predict = uint8arrayToString(data);
+            return res.json(account);
+		});
+
+		ls.stderr.on('data', (data) => {
+		  console.log("stderr: " + data);
+		});
+
+		ls.on('exit', (code) => {
+		  console.log("child process exited with code " + code);
+		});
+    });
+});
+
+/*
 router.post('/', function(req, res) {
     var collection = db.get('accounts');
     collection.update({ username: req.body.username }, { $set: {
@@ -71,5 +111,46 @@ router.post('/', function(req, res) {
     	res.json(account);
     });
 });
+*/
+router.post('/', function(req, res) {
+	var collection = db.get('accounts');
+	console.log(req.body);
+	collection.insert(req.body, {w: 1}, function(err, result) {
+		if (err) throw err;
+		//console.log(result);
+		res.json(result);
+	});
+}); 
+
+router.post('/register', function(req, res) {
+    const nodemailer = require('nodemailer');
+    var wrapObj = {
+        code: ""
+    };
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < 6; i++)
+        wrapObj.code += possible.charAt(Math.floor(Math.random() * possible.length));
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'predapp.system@gmail.com',
+            pass: 'metsysppaderp'
+        }
+    });
+    var mailOptions = {
+        from: 'predapp.system@gmail.com',
+        to: req.body.email,
+        subject: 'Confirmation',
+        html: '<h1>Hi! Welcome to the system.</h1><p><i>This is an auto-generated email from Grade Prediction System.</i></p><p>Your confirmation code is: <font size="6"><b>' + wrapObj.code + '</b></font></p>'
+    };
+    transporter.sendMail(mailOptions, function(error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+    res.json(wrapObj);
+}); 
 
 module.exports = router;

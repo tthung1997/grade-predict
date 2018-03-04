@@ -22,10 +22,12 @@ app.config(['$routeProvider', function($routeProvider) {
         templateUrl: 'partials/viewGrade.html',
         controller: 'ViewCtrl'
     })
+	/*
     .when('/editGrade/:username', {
         templateUrl: 'partials/editGrade.html',
         controller: 'EditCtrl'
     })
+	*/
     .otherwise({
         redirectTo: '/'
     })
@@ -42,6 +44,10 @@ app.controller('LoginCtrl', ['$scope', '$resource', '$location',
             var correctPassword = "";
             var Account = $resource('/api/accounts/:username');
             Account.get({username: $scope.username}, function(account) {
+				if (account.password == undefined) {
+					$scope.message = "Username does not exist!";
+					return;
+				}
                 correctPassword = account.password;
                 if ($scope.password == correctPassword) {
                     $location.path('/viewGrade/' + $scope.username);
@@ -56,28 +62,51 @@ app.controller('LoginCtrl', ['$scope', '$resource', '$location',
 
 app.controller('RegisterCtrl', ['$scope', '$resource', '$location', 
     function($scope, $resource, $location) {
-        $scope.correctCode = "";
-        $scope.confirmed = false;
+		var format = function(input) {
+			return (input == undefined ? "" : input.trim());
+		}
+        correctCode = "";
+        confirmed = false;
+		usernameChecked = false;
+		$scope.checkUsername = function() {
+			$scope.message = "";
+			$scope.username = format($scope.username);
+			if ($scope.username == "") {
+				$scope.message = "Username cannot be empty!";
+				return;
+			}
+			var Account = $resource('/api/accounts/:username');
+			Account.get({username: $scope.username}, function(account) {
+				if (account.username != undefined) {
+					$scope.message = "Username has already existed!";
+					return;
+				}
+				else {
+					$scope.message = "You can use this username";
+					usernameChecked = true;
+				}
+			});
+		}
         $scope.sendEmail = function() {
             $scope.message = "";
-            $scope.email = $scope.email == undefined ? "" : $scope.email;
+            $scope.email = format($scope.email);
             if (($scope.email).trim() == "") {
                 $scope.message = "You have to enter your email to receive confirmation code.";
                 return;
             }
-            var Email = $resource('/register');
+            var Email = $resource('/api/accounts/register');
             Email.save({email: $scope.email}, function(data) {
-                $scope.correctCode = data.code;
+                correctCode = data.code;
             });
         }
         $scope.verify = function() {
             $scope.message = "";
-            if ($scope.correctCode == "") {
+            if (correctCode == "") {
                 $scope.message = "The confirmation code has not been generated.";
                 return;
             }
-            if (($scope.confirmCode).trim() == $scope.correctCode) {
-                $scope.confirmed = true;
+            if (($scope.confirmCode).trim() == correctCode) {
+                confirmed = true;
                 $scope.message = "Email confirmed!";
             } else {
                 $scope.message = "Incorrect code!";
@@ -88,23 +117,67 @@ app.controller('RegisterCtrl', ['$scope', '$resource', '$location',
             $scope.message = "";
         }
         $scope.regist = function() {
-            if (!$scope.confirmed) {
+			var roles = document.getElementsByName("optradio");
+			var role = "";
+			for(var i = 0; i < roles.length; i++) {
+				if (roles[i].checked) {
+					role = roles[i].value;
+				}
+			}
+			if (role == "") {
+				$scope.message = "You need to select your role.";
+				return;
+			}
+			$scope.nuid = format($scope.nuid);
+			if ($scope.nuid == "") {
+				$scope.message = "NUID cannot be empty!";
+				return;
+			}
+			else {
+				var Account = $resource("/api/accounts/:nuid");
+				Account.get({nuid: $scope.nuid}, function(account) {
+					if (account.username != undefined) {
+						$scope.message = "NUID has already existed!"
+						return;
+					}
+				});
+			}
+            if (!usernameChecked) {
+				$scope.message = "Your username has not been checked yet!";
+				return;
+			}
+			if (!confirmed) {
                 $scope.message = "Your email has not been confirmed yet!";
                 return;
             }
+			if ($scope.password == undefined || $scope.password == "") {
+				$scope.message = "Password cannot be empty!";
+				return;
+			}
             if ($scope.password != $scope.rpassword) {
                 $scope.message = "Password does not match!";
                 return;
             }
-            alert("You have successfully registered!\nYou will be redirected to the login page.");
-            $location.path("/");
+			var account = {
+				"Full name": $scope.fullname,
+				"Role": role,
+				"NUID": $scope.nuid,
+				"Email": $scope.email,
+				"Username": $scope.username,
+				"Password": $scope.password
+			};
+			var Accounts = $resource('/api/accounts');
+			Accounts.save(account, function() {
+				alert("You have successfully registered!\nYou will be redirected to the login page.");
+	            $location.path("/");
+			});
         }
     }
 ]);
 
 app.controller('ProfileCtrl', ['$scope', '$resource', '$location',
     function($scope, $resource, $location) {
-        var Model = $resource('/createModels');
+        var Model = $resource('/api/models');
         Model.save(function(data) {
             console.log(data.text);
         });
@@ -125,13 +198,13 @@ app.controller('ViewCtrl', ['$scope', '$resource', '$routeParams',
     function($scope, $resource, $routeParams) {
         var Account = $resource('/api/accounts/:username');
         Account.get({username: $routeParams.username}, function(account) {
-            var Params = $resource('/createModels');
+            var Params = $resource('/api/models');
             Params.get(function(data) {
                 console.log(data.params.split(","));
             });
             $scope.account = account;
             if ($scope.account.hw1 == -1) {
-                $scope.account.hw1 = "--";
+                $scope.account["hw1"] = "--";
             }
             if ($scope.account.hw2 == -1) {
                 $scope.account.hw2 = "--";
