@@ -1,0 +1,35 @@
+<style>
+    table, th, td {
+        border: 1px solid grey;
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    table tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+</style>
+
+<div ng-app = "Grade" ng-controller = "StudCtrl">
+    <h1>{{account["Full name"]}}</h1>
+	<h5><a href = "/#/">Logout</a></h5>
+	<p>
+		{{message}}
+	</p>
+    <table border = "0" id = "profileTable" style = "margin-bottom: 10px">
+    </table>
+	<div style = "width:100%;margin:10px 10px 10px 0">
+		<label>Course(s):</label>
+		<select ng-model = "course" style = "width:150px;height:30px;">
+			<option disable selected value>Choose...</option>
+			<option value = "csce156">CSCE156</option>
+			<option value = "csce235">CSCE235</option>
+		</select>
+		<button type = "button" class = "btn btn-primary" ng-click = "viewGrade()">View grade</button>
+	</div>
+</div>
+

@@ -10,18 +10,22 @@ app.config(['$routeProvider', function($routeProvider) {
         templateUrl: 'partials/register.html',
         controller: 'RegisterCtrl'
     })
-    .when('/profProfile', {
-        templateUrl: 'partials/profProfile.html',
-        controller: 'ProfileCtrl'
+    .when('/professor/:username', {
+        templateUrl: 'partials/professor.html',
+        controller: 'ProfCtrl'
     })
-    .when('/uploadGrade/:course', {
+    .when('/professor/:username/uploadGrade/:course', {
         templateUrl: 'partials/uploadGrade.html',
         controller: 'UploadCtrl'
     })
-    .when('/viewGrade/:username', {
-        templateUrl: 'partials/viewGrade.html',
-        controller: 'ViewCtrl'
+    .when('/student/:username', {
+        templateUrl: 'partials/student.html',
+        controller: 'StudCtrl'
     })
+	.when('/student/:username/viewGrade/:course', {
+		templateUrl: 'partials/viewGrade.html',
+		controller: 'ViewCtrl'
+	})
 	/*
     .when('/editGrade/:username', {
         templateUrl: 'partials/editGrade.html',
@@ -44,13 +48,18 @@ app.controller('LoginCtrl', ['$scope', '$resource', '$location',
             var correctPassword = "";
             var Account = $resource('/api/accounts/:username');
             Account.get({username: $scope.username}, function(account) {
-				if (account.password == undefined) {
+				if (account.Password == undefined) {
 					$scope.message = "Username does not exist!";
 					return;
 				}
-                correctPassword = account.password;
+                correctPassword = account.Password;
                 if ($scope.password == correctPassword) {
-                    $location.path('/viewGrade/' + $scope.username);
+					if (account.Role == "Professor") {
+						$location.path('/professor/' + $scope.username);
+					}
+					else {
+						$location.path('/student/' + $scope.username);
+					}
                 }
                 else {
                     $scope.message = "Wrong credential!";
@@ -175,15 +184,53 @@ app.controller('RegisterCtrl', ['$scope', '$resource', '$location',
     }
 ]);
 
-app.controller('ProfileCtrl', ['$scope', '$resource', '$location',
-    function($scope, $resource, $location) {
-        var Model = $resource('/api/models');
-        Model.save(function(data) {
-            console.log(data.text);
-        });
+app.controller('ProfCtrl', ['$scope', '$resource', '$location', '$routeParams',
+    function($scope, $resource, $location, $routeParams) {
+		var Account = $resource('/api/accounts/:username');
+		Account.get({username: $routeParams.username}, function(account) {
+			$scope.fullname = account["Full name"];
+			var Properties = $resource('/api/multipp/properties');
+			Properties.save({filename: "UserInfo"}, function(data) {
+				console.log(data.list);
+				var table = document.getElementById("profileTable");
+				while (table.firstChild) {
+					table.removeChild(table.firstChild);
+				}
+				for(var prop in data.list) {
+					var tr = document.createElement("tr");
+					var td_name = document.createElement("td");
+					var td_val = document.createElement("td");
+					var name = document.createTextNode(data.list[prop]);
+					var val = document.createTextNode(account[data.list[prop]]);
+					td_name.appendChild(name);
+					td_val.appendChild(val);
+					tr.appendChild(td_name);
+					tr.appendChild(td_val);
+					table.appendChild(tr);
+				}
+			});
+		});
+//		var Recent = $resource('/api/models/recent');
+		$scope.rerunModel= function() {
+			if ($scope.courseToRun == undefined) {
+				$scope.message = "No course is chosen.";
+				return;
+			}
+			var Model = $resource('/api/models');
+			Model.save({course: $scope.courseToRun}, function (newdata) {
+				$scope.message = "Finished!";
+			});
+		};
         $scope.upload = function() {
-            $location.path('/uploadGrade/' + $scope.course);
-        }
+			if ($scope.course == undefined) {
+				$scope.message = "No course is chosen.";
+				return;
+			}
+//			Recent.save({course: $scope.course}, function(data) {
+//				console.log("Done saving to /recent.");
+//			});
+            $location.path('/professor/' + $routeParams.username + '/uploadGrade/' + $scope.course);
+        };
     }
 ]);
 
@@ -194,16 +241,36 @@ app.controller('UploadCtrl', ['$scope', '$routeParams',
     }
 ]);
 
-app.controller('ViewCtrl', ['$scope', '$resource', '$routeParams',
-    function($scope, $resource, $routeParams) {
+app.controller('StudCtrl', ['$scope', '$resource', '$routeParams', '$location',
+    function($scope, $resource, $routeParams, $location) {
         var Account = $resource('/api/accounts/:username');
         Account.get({username: $routeParams.username}, function(account) {
-            var Params = $resource('/api/models');
+            /*var Params = $resource('/api/models');
             Params.get(function(data) {
                 console.log(data.params.split(","));
-            });
+            });*/
             $scope.account = account;
-            if ($scope.account.hw1 == -1) {
+			var Properties = $resource('/api/multipp/properties');
+			Properties.save({filename: "UserInfo"}, function(data) {
+				console.log(data.list);
+				var table = document.getElementById("profileTable");
+				while (table.firstChild) {
+					table.removeChild(table.firstChild);
+				}
+				for(var prop in data.list) {
+					var tr = document.createElement("tr");
+					var td_name = document.createElement("td");
+					var td_val = document.createElement("td");
+					var name = document.createTextNode(data.list[prop]);
+					var val = document.createTextNode(account[data.list[prop]]);
+					td_name.appendChild(name);
+					td_val.appendChild(val);
+					tr.appendChild(td_name);
+					tr.appendChild(td_val);
+					table.appendChild(tr);
+				}
+			});
+            /*if ($scope.account.hw1 == -1) {
                 $scope.account["hw1"] = "--";
             }
             if ($scope.account.hw2 == -1) {
@@ -269,12 +336,97 @@ app.controller('ViewCtrl', ['$scope', '$resource', '$routeParams',
                 document.getElementById("predict").setAttribute("color", "red");
             }
             $scope.available = (80).toFixed(2);
-            $scope.total = ((account.hw1 + account.hw2 + account.hw3) / 300.0 * 55 + (account.q1 + account.q2 + account.q3) / 3.0 + account.midterm).toFixed(2);
+            $scope.total = ((account.hw1 + account.hw2 + account.hw3) / 300.0 * 55 + (account.q1 + account.q2 + account.q3) / 3.0 + account.midterm).toFixed(2);*/
         });
+		$scope.viewGrade = function() {
+			if ($scope.course == undefined) {
+				$scope.message = "No course is chosen.";
+				return;
+			}
+			console.log('/student/' + $routeParams.username + "/viewGrade/" + $scope.course);
+			$location.path('/student/' + $routeParams.username + "/viewGrade/" + $scope.course);
+		}
     }
 ]);
 
-app.controller('EditCtrl', ['$scope', '$resource', '$location', '$routeParams', 
+app.controller('ViewCtrl', ['$scope', '$resource', '$location', '$routeParams',
+	function($scope, $resource, $location, $routeParams) {
+		$scope.back = function() {
+			$location.path("/student/" + $routeParams.username);
+		}
+		$scope.course = $routeParams.course.toUpperCase();
+		var Account = $resource('/api/accounts/:username');
+		var Grade = $resource('/api/grades/:nuid');
+		var Properties = $resource('/api/multipp/properties');
+		Account.get({username: $routeParams.username}, function(account) {
+			$scope.account = account;
+			var wrapObj = {
+				course: $routeParams.course,
+				nuid: $scope.account.NUID
+			};
+			var Grades = $resource('/api/grades/' + $routeParams.course);
+			Grades.get(function(data) {
+				var fullGrade = JSON.parse(data.grades);
+				var thisGrade = null;
+				for(var index in fullGrade) {
+					if (fullGrade[index]["SIS User ID"] == $scope.account.NUID) {
+						thisGrade = fullGrade[index];
+						console.log(thisGrade);
+						break;
+					}
+				}
+				if (thisGrade == null) {
+					$scope.message = "Cannot find your grade!";
+					return;
+				}
+				Properties.save({filename: wrapObj.course}, function(data) {
+					var validGrade = {};
+					for(var prop in data.list) {
+						if (thisGrade[data.list[prop]] != undefined) {
+							validGrade[data.list[prop]] = thisGrade[data.list[prop]];
+						}
+						else {
+							validGrade[data.list[prop]] = -1;
+						}
+					}
+					console.log(validGrade);
+					Grades.save({nuid: wrapObj.nuid, grades: validGrade}, function(data) {
+						document.getElementById("predict").innerHTML = data.predict;
+						if (data.predict == "Good") {
+							document.getElementById("predict").setAttribute("color", "green");
+						} else if (account.predict == "OK") {
+							document.getElementById("predict").setAttribute("color", "#ecc400");
+						} else {
+							document.getElementById("predict").setAttribute("color", "red");
+						}									
+					});
+				});
+			});
+			Grade.save(wrapObj, function(grade) {
+				Properties.save({filename: wrapObj.course}, function(data) {
+					var table = document.getElementById("profileTable");
+					while (table.firstChild) {
+						table.removeChild(table.firstChild);
+					}
+					for(var prop in data.list) {
+						var tr = document.createElement("tr");
+						var td_name = document.createElement("td");
+						var td_val = document.createElement("td");
+						var name = document.createTextNode(data.list[prop]);
+						var val = document.createTextNode(grade[data.list[prop]]);
+						td_name.appendChild(name);
+						td_val.appendChild(val);
+						tr.appendChild(td_name);
+						tr.appendChild(td_val);
+						table.appendChild(tr);
+					}
+				});
+			});
+		});
+	}
+]);
+
+/*app.controller('EditCtrl', ['$scope', '$resource', '$location', '$routeParams', 
     function($scope, $resource, $location, $routeParams) {
         var Account = $resource('/api/accounts/:username');
         Account.get({username: $routeParams.username}, function(account) {
@@ -282,8 +434,9 @@ app.controller('EditCtrl', ['$scope', '$resource', '$location', '$routeParams',
         });
         $scope.update = function() {
             Account.save($scope.account, function() {
-                $location.path('/viewGrade/' + $routeParams.username);
+                $location.path('/student/' + $routeParams.username);
             });
         }
     }
-]);
+]);*/
+

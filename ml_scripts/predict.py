@@ -6,19 +6,21 @@ from sklearn import datasets, linear_model, neighbors, svm
 from sklearn.externals import joblib
 
 def read_in():
-    q1 = float(sys.argv[1])
-    q2 = float(sys.argv[2])
-    q3 = float(sys.argv[3])
-    hw1 = float(sys.argv[4])
-    hw2 = float(sys.argv[5])
-    hw3 = float(sys.argv[6])
-    midterm = float(sys.argv[7])
-    return [[q1, q2, q3, hw1, hw2, hw3, midterm]]
+    rFile = open('ml_scripts/models/' + sys.argv[1] + '/params.txt', 'r')
+    params = rFile.read().split(",")
+    rFile.close()
+    result = []
+    for param in params:
+    	for i in range(1, len(sys.argv)):
+    		if (sys.argv[i] == param):
+    			result += [float(sys.argv[i + 1])]
+    			break
+    return [result]
 
 def main():
     X = read_in()
-    lr = joblib.load('ml_scripts/models/lr.pkl') 
-    nb = joblib.load('ml_scripts/models/nb.pkl')
+    lr = joblib.load('ml_scripts/models/' + sys.argv[1] + '/lr.pkl') 
+    nb = joblib.load('ml_scripts/models/' + sys.argv[1] + '/nb.pkl')
     res = min(lr.predict(X)[0], nb.predict(X)[0])
     print(res, end='', flush=True)
 

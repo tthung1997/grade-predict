@@ -8,13 +8,19 @@ from sklearn.metrics import mean_squared_error
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 import re
+import sys
 
 def load_data(csv_path):
     return pd.read_csv(csv_path, index_col = 0)
 
+def read_in():
+	course = sys.argv[1];
+	return course;
+
 #Load input
 inpgrade = load_data("public/file-storage/grade.csv")
 names = list(inpgrade.columns.values)
+course = read_in()
 #Rename columns
 for name in names:
     newName = re.sub(r"\(.*\)", "", name).strip()
@@ -28,9 +34,12 @@ if ('Section' in inpgrade.columns.values):
 inpgrade.dropna(axis = 1, how = 'all', inplace = True)
 inpgrade.fillna(0, inplace = True)
 chosen = inpgrade.select_dtypes(include='float64').columns.values
+#fileO = open("ml_scripts/data/" + course + "/grade.json", "w")
+#fileO.write(inpgrade.to_json(orient="records"))
+#fileO.close() 
 
 #Load data
-grade = load_data("ml_scripts/data/full-grade-235.csv")
+grade = load_data("ml_scripts/data/" + course + "/full-grade.csv")
 intersect = [val for val in chosen if val in grade.columns.values]
 X = grade[intersect]
 y = grade[["Grade"]].values.ravel()
@@ -43,13 +52,14 @@ nb_model.fit(X, y)
 
 #Export models
 from sklearn.externals import joblib
-joblib.dump(lr_model, 'ml_scripts/models/lr.pkl')
-joblib.dump(nb_model, 'ml_scripts/models/nb.pkl')
+joblib.dump(lr_model, 'ml_scripts/models/' + course + '/lr.pkl')
+joblib.dump(nb_model, 'ml_scripts/models/' + course + '/nb.pkl')
 
 res = ""
 for feature in intersect:
 	res += feature + ","
-res = res[:-1]
+res = res[:-1] + ";"
+res += inpgrade.to_json(orient="records")
 print(res, end='', flush=True)
 
 #Testing

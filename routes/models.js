@@ -15,42 +15,112 @@ const multerConfig = {
     })
 };
 
-router.get('/', function(req, res) {
+/*router.get('/', function(req, res) {
     var uint8ToString = function(data) {
         return String.fromCharCode.apply(null, data);
     };
-    var wrapObj = {
-        params: ""
-    };
-    var fs = require('fs');
-    fs.readFile("ml_scripts/models/params.txt", function(err, data) {
-        if (err) {
-            throw err;
-        } 
-        wrapObj.params = uint8ToString(data);
-        res.json(wrapObj);
-    });
+	var wrapObj = {
+		course: "",
+		 params: ""
+	};
+	var fs = require("fs");
+	function readCourse(callback) {
+		fs.readFile("ml_scripts/models/recent-course.txt", function(err, data) {
+			if (err) {
+				throw err;
+			}
+			callback(uint8ToString(data));
+		});
+	}
+	function readParams(callback) {
+	    fs.readFile("ml_scripts/models/params.txt", function(err, data) {
+		    if (err) {
+			    throw err;
+			} 
+			callback(uint8ToString(data));
+		});
+	}
+	readCourse(function(course) {
+		wrapObj.course = course;
+		readParams(function (params) {
+			wrapObj.params = params;
+			console.log(wrapObj);
+			res.json(wrapObj);
+		})
+	})
+});*/
+/*
+router.post('/recent', function(req, res) {
+	var wrapObj = {
+		course: req.body.course
+	};
+	fs = require('fs');
+	fs.writeFile("ml_scripts/models/recent-course.txt", wrapObj.course, function(err) {
+		if (err)
+			throw err;
+		else {
+			console.log("Course saved.");
+		}
+	});
 });
 
+router.get('/recent', function(req, res) {
+	var uint8ToString = function(data) {
+		return String.fromCharCode.apply(null, data);
+	};
+	fs = require('fs');
+	function readCourse(callback) {
+		fs.readFile("ml_scripts/models/recent-course.txt", function(err, data) {
+			if (err)
+				throw err;
+			callback(uint8ToString(data));
+		});
+	}
+	readCourse(function(data) {
+		var wrapObj = {
+			course: data
+		};
+		res.json(wrapObj);
+	});
+});
+*/
 router.post('/', function(req, res) {
     var uint8ToString = function(data) {
         return String.fromCharCode.apply(null, data);
     };
     var wrapObj = {
-        text: ""
+		course: req.body.course,
+        text: "",
+		grades: []
     };
     const spawn = require('child_process').spawn;
-	const ls = spawn('python3', ['ml_scripts/train_models.py']);
+	const ls = spawn('python3', ['ml_scripts/train_models.py', req.body.course]);
     ls.stdout.on('data', (data) => {
-        wrapObj.text = uint8ToString(data);
+        temp = uint8ToString(data).split(';');
+		wrapObj.text = temp[0];
+		wrapObj.grades = temp[1];
         var fs = require('fs');
-        fs.writeFile("ml_scripts/models/params.txt", wrapObj.text, function(err) {
+/*		fs.writeFile("ml_scripts/models/recent-course.txt", wrapObj.course, function(err) {
+			if (err) {
+				console.log(err);
+			} else {
+				console.log("Course recorded.");
+			}
+		});*/
+        fs.writeFile("ml_scripts/models/" + wrapObj.course + "/params.txt", wrapObj.text, function(err) {
             if (err) {
                 console.log(err);
             } else {
                 console.log("File saved.");
             }
         });
+		fs.writeFile("ml_scripts/data/" + wrapObj.course + "/grade.json", wrapObj.grades, function(err) {
+			if (err) {
+				console.log(err);
+			} else {
+				console.log("Grade.json created.");
+			}
+		});
         return res.json(wrapObj);
     }); 
 	ls.stderr.on('data', (data) => {
@@ -62,7 +132,7 @@ router.post('/', function(req, res) {
 });
 
 router.post('/upload', multer(multerConfig).single('csvfile'), function(req, res) {
-    res.redirect('/#/profProfile');
+	res.redirect('/#/profProfile');
 });
 
 module.exports = router;

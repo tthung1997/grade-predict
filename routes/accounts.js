@@ -19,6 +19,8 @@ router.get('/:username', function(req, res) {
         if (account == null) {
 			return res.json({});
 		}
+		res.json(account);
+		/*
 		var uint8arrayToString = function(data) {
             return String.fromCharCode.apply(null, data);
         };
@@ -44,7 +46,7 @@ router.get('/:username', function(req, res) {
 
 		ls.on('exit', (code) => {
 		  console.log("child process exited with code " + code);
-		});
+		});*/
     });
 });
 
@@ -112,6 +114,7 @@ router.post('/', function(req, res) {
     });
 });
 */
+
 router.post('/', function(req, res) {
 	var collection = db.get('accounts');
 	console.log(req.body);
