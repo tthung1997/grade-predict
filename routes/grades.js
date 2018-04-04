@@ -33,7 +33,26 @@ router.post('/csce156', function(req, res) {
     var collection = db.get('csce156');
     collection.update({ NUID: req.body.nuid }, { $set: req.body.grades }, function(err, account) {
     	if (err) throw err;
-    	res.json(account);
+    	const spawn = require('child_process').spawn;
+    	var params = ['ml_scripts/predict.py', 'csce156'];
+    	for(var index in req.body.grades) {
+    		params.push(index, req.body.grades[index]);
+    	}
+		const ls = spawn('python3', params);
+    	ls.stdout.on('data', (data) => {
+			var wrapObj = {
+				predict: uint8ToString(data)
+			};
+            return res.json(wrapObj);
+		});
+
+		ls.stderr.on('data', (data) => {
+		  console.log("stderr: " + data);
+		});
+
+		ls.on('exit', (code) => {
+		  console.log("child process exited with code " + code);
+		});
     });
 });
 

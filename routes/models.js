@@ -90,15 +90,17 @@ router.post('/', function(req, res) {
     };
     var wrapObj = {
 		course: req.body.course,
-        text: "",
+		noOfModels: 0,
+        params: "",
 		grades: []
     };
     const spawn = require('child_process').spawn;
-	const ls = spawn('python3', ['ml_scripts/train_models.py', req.body.course]);
+	const ls = spawn('python3', ['ml_scripts/train_models_new.py', req.body.course]);
     ls.stdout.on('data', (data) => {
         temp = uint8ToString(data).split(';');
-		wrapObj.text = temp[0];
-		wrapObj.grades = temp[1];
+        wrapObj.noOfModels = temp[0];
+		wrapObj.params = temp[1];
+		wrapObj.grades = temp[2];
         var fs = require('fs');
 /*		fs.writeFile("ml_scripts/models/recent-course.txt", wrapObj.course, function(err) {
 			if (err) {
@@ -107,11 +109,18 @@ router.post('/', function(req, res) {
 				console.log("Course recorded.");
 			}
 		});*/
-        fs.writeFile("ml_scripts/models/" + wrapObj.course + "/params.txt", wrapObj.text, function(err) {
+		fs.writeFile("ml_scripts/models/" + wrapObj.course + "/noOfModels.txt", wrapObj.noOfModels, function(err) {
             if (err) {
                 console.log(err);
             } else {
-                console.log("File saved.");
+                console.log("#Models saved.");
+            }
+        });
+        fs.writeFile("ml_scripts/models/" + wrapObj.course + "/params.txt", wrapObj.params, function(err) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("Params saved.");
             }
         });
 		fs.writeFile("ml_scripts/data/" + wrapObj.course + "/grade.json", wrapObj.grades, function(err) {
@@ -121,7 +130,9 @@ router.post('/', function(req, res) {
 				console.log("Grade.json created.");
 			}
 		});
-        return res.json(wrapObj);
+        //return res.json(wrapObj);
+        return res.send('OK');
+        //return;
     }); 
 	ls.stderr.on('data', (data) => {
 		console.log("stderr: " + data);
@@ -132,7 +143,7 @@ router.post('/', function(req, res) {
 });
 
 router.post('/upload', multer(multerConfig).single('csvfile'), function(req, res) {
-	res.redirect('/#/profProfile');
+	res.redirect('/#/profProfile/');
 });
 
 module.exports = router;

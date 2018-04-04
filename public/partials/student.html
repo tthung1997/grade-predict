@@ -3,33 +3,29 @@
         border: 1px solid grey;
         border-collapse: collapse;
         padding: 5px;
-    }
-
-    table tr:nth-child(odd) {
-        background-color: #f2f2f2;
-    }
-
-    table tr:nth-child(even) {
-        background-color: #ffffff;
+        background-color:white;
     }
 </style>
 
-<div ng-app = "Grade" ng-controller = "StudCtrl">
-    <h1>{{account["Full name"]}}</h1>
-	<h5><a href = "/#/">Logout</a></h5>
+<div ng-app = "Grade" ng-controller = "StudCtrl" style = "text-align:center">
+    <h1 style = "max-width:600px;margin:auto;text-align:center;width:80%;background-color:#8f8f8f;color:white;padding:10px">{{account["Full name"]}}</h1>
+	<a href = "/#/">Logout</a>
 	<p>
 		{{message}}
 	</p>
-    <table border = "0" id = "profileTable" style = "margin-bottom: 10px">
-    </table>
-	<div style = "width:100%;margin:10px 10px 10px 0">
-		<label>Course(s):</label>
+	<div style = "background-color:#f3f3f3;max-width:600px;width:80%;margin:auto;padding:0 20px 20px 20px;border:2px solid grey;border-radius:5px">
+		<h4>Profile:</h4>
+		<table border = "0" id = "profileTable" style = "margin:auto">
+		</table>
+	</div>
+	<div style = "background-color:#f3f3f3;max-width:600px;width:80%;margin:10px auto;padding:20px 20px 20px 20px;border:2px solid grey;border-radius:5px">
+		<label style = "margin-right:10px">Course:</label>
 		<select ng-model = "course" style = "width:150px;height:30px;">
-			<option disable selected value>Choose...</option>
+			<option disable selected value>Choose course...</option>
 			<option value = "csce156">CSCE156</option>
 			<option value = "csce235">CSCE235</option>
 		</select>
-		<button type = "button" class = "btn btn-primary" ng-click = "viewGrade()">View grade</button>
+		<button class = "btn btn-primary" ng-click = "viewGrade()" style = "margin-left:10px">View grade</button>
 	</div>
 </div>
 

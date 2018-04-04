@@ -4,26 +4,40 @@
         border-collapse: collapse;
         padding: 5px;
     }
-
-    table tr:nth-child(odd) {
-        background-color: #f2f2f2;
+    
+    tr:nth-child(odd) {
+    	background-color: #f2f2f2;
     }
 
-    table tr:nth-child(even) {
-        background-color: #ffffff;
-    }
+    .back-button {
+		background-color: #8f8f8f;
+		border: none;
+		color: white;
+		padding: 10px 20px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		cursor: pointer;
+		text-decoration: none;
+		width:80%;
+	}
+	.back-button:hover {
+		background-color: #4b4b4b;
+		color: white;
+	}
 </style>
 
-<div ng-app = "Grade" ng-controller = "ViewCtrl">
-    <h1>{{account["Full name"]}}</h1>
-	<h2>{{course}}</h2>
-	<a href = "/#/">Logout</a>
-	<p>
-		{{message}}
-	</p>
-    <table border = "0" id = "profileTable" style = "margin-bottom: 10px">
-    </table>
-    Predicted Group: <strong><font id = "predict"></font></strong><br>
-	<button type = "button" class = "btn btn-default" ng-click = "back()" style = "margin-top: 10px">Back</button>
+<div ng-app = "Grade" ng-controller = "ViewCtrl" style = "margin:auto;max-width:600px;width:80%;text-align:center;">
+    <h1 style = "width:100%;margin:auto;text-align:center;background-color:#8f8f8f;color:white;padding:10px">{{account["Full name"]}}</h1>
+   	<a href = "/#/">Logout</a>
+   	<div style = "border:grey 2px solid;margin-top:10px;border-radius:5px">
+		<h2>{{course}}</h2>
+		<table border = "0" id = "profileTable" style = "margin:auto">
+		</table>
+		<div style = "background-color:#f3f3f3;max-width:600px;width:80%;margin:10px auto;padding:20px 20px 20px 20px;border:2px solid grey;border-radius:5px;font-size:16px">
+			Predicted Group: <strong><font id = "predict"></font></strong><br>
+		</div>
+		<button class = "back-button" ng-click = "back()" style = "margin:0px auto 10px auto">Back</button>
+	</div>
 </div>
 

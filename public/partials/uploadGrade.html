@@ -1,12 +1,56 @@
-<h1>Upload grade for {{course}}</h1>
+<head>
+	<style>
+		button {
+			background-color: #337ab7;
+			border: none;
+			color: white;
+			padding: 10px 20px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			cursor: pointer;
+			float: left;
+			text-decoration: none;
+			width:100%;
+		}
+		button:hover {
+			background-color: #286090;
+			color: white;
+		}
+		.reset-button, a {
+			background-color: #8f8f8f;
+			border: none;
+			color: white;
+			padding: 10px 20px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			cursor: pointer;
+			float: left;
+			text-decoration: none;
+			width:100%;
+		}
+		.reset-button:hover, a:hover {
+			background-color: #4b4b4b;
+			color: white;
+		}
+	</style>
+</head>
 
-<form action = "/api/models/upload" enctype = "multipart/form-data" method = "POST">
-	<input type = "hidden" name = "myparam" value = {{course}}/>
-    <div class = "form-group">
-        <label>Grade file</label>
-        <input class = "form-control" type = "file" ng-model = "gradeFile" accept = ".csv" name = "csvfile"></input>
-    </div>
-    <input type = "submit" class = "btn btn-primary" value = "Upload"></input>
-    <a href = "/#/" class = "btn btn-default">Logout</a>
-</form>
+<body>
+	<div style = "max-width:500px;width:80%;text-align:center;margin:auto">
+		<h1 style = "width:100%;margin:auto;text-align:center;background-color:#8f8f8f;color:white;padding:10px">Upload grade for {{course}}</h1>
 
+		<div style = "background-color:#f3f3f3;width:100%;margin:10px auto;padding:20px 20px 60px 20px;border:2px solid grey;border-radius:5px;font-size:16px">
+			<form action = "/api/models/upload" enctype = "multipart/form-data" method = "POST">
+				<input type = "hidden" name = "myparam" value = {{course}}/>
+				<div class = "form-group">
+					<label>Grade file</label>
+					<input class = "form-control" type = "file" ng-model = "gradeFile" accept = ".csv" name = "csvfile"></input>
+				</div>
+				<div style = "width:50%;padding-right:5px;float:left;"><button type = "submit">Upload</button></div>
+				<div style = "width:50%;padding-left:5px;float:right;"><a href = "javascript:history.back()">Back</a></div>
+			</form>
+		</div>
+	</div>
+</body>

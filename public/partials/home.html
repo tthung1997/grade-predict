@@ -1,18 +1,39 @@
-<h1>Login</h1>
+<head>
+	<style>
+		button, a {
+			background-color: #337ab7;
+			border: none;
+			color: white;
+			padding: 10px 20px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			cursor: pointer;
+			float: left;
+			width:100%;
+		}
+		button:hover, a:hover {
+			background-color: #286090;
+			color: white;
+		}
+	</style>
+</head>
 
-<p>
-    {{message}}
-</p>
-
-<form>
-    <div class = "form-group">
-        <label>Username</label>
-        <input class = "form-control" ng-model = "username"></input>
-    </div>
-    <div class = "form-group">
-        <label>Password</label>
-        <input class = "form-control" type = "password" ng-model = "password"></input>
-    </div>
-    <input type = "button" class = "btn btn-primary" value = "Login" ng-click = "validate()"></input>
-    <a href = "/#/register" class = "btn btn-primary">Register</a>
-</form>
+<body>
+	<h1 style = "margin:auto;max-width:500px;text-align:center;width:50%;background-color:#8f8f8f;color:white;padding:10px">Login</h1>
+	<form style = "margin:auto;max-width:500px;width:50%;padding:10px 20px 60px 20px;text-align:center;border:#8f8f8f 1px solid;">
+		<p>
+			{{message}}
+		</p>
+		<div class = "form-group">
+			<label>Username</label>
+			<input class = "form-control" ng-model = "username" style = "text-align:center"></input>
+		</div>
+		<div class = "form-group">
+			<label>Password</label>
+			<input class = "form-control" type = "password" ng-model = "password" style = "text-align:center"></input>
+		</div>
+		<div style = "width:50%;float:left;padding-right:5px"><button ng-click = "validate()">Login</button></div>
+		<div style = "width:50%;float:right;padding-left:5px"><a style = "text-decoration:none" href = "/#/register">Register</a></div>
+	</form>
+</body>

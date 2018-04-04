@@ -202,7 +202,9 @@ app.controller('ProfCtrl', ['$scope', '$resource', '$location', '$routeParams',
 					var td_val = document.createElement("td");
 					var name = document.createTextNode(data.list[prop]);
 					var val = document.createTextNode(account[data.list[prop]]);
-					td_name.appendChild(name);
+					var b = document.createElement("B");
+					b.appendChild(name);
+					td_name.appendChild(b);
 					td_val.appendChild(val);
 					tr.appendChild(td_name);
 					tr.appendChild(td_val);
@@ -229,6 +231,11 @@ app.controller('ProfCtrl', ['$scope', '$resource', '$location', '$routeParams',
 //			Recent.save({course: $scope.course}, function(data) {
 //				console.log("Done saving to /recent.");
 //			});
+//			if (typeof(Storage) !== "undefined") {
+//				localStorage.setItem("profId", $routeParams.username);
+//			} else {
+//				console.log("storage is not supported");
+//			}
             $location.path('/professor/' + $routeParams.username + '/uploadGrade/' + $scope.course);
         };
     }
@@ -263,7 +270,9 @@ app.controller('StudCtrl', ['$scope', '$resource', '$routeParams', '$location',
 					var td_val = document.createElement("td");
 					var name = document.createTextNode(data.list[prop]);
 					var val = document.createTextNode(account[data.list[prop]]);
-					td_name.appendChild(name);
+					var b = document.createElement("B");
+					b.appendChild(name);
+					td_name.appendChild(b);
 					td_val.appendChild(val);
 					tr.appendChild(td_name);
 					tr.appendChild(td_val);
@@ -394,7 +403,7 @@ app.controller('ViewCtrl', ['$scope', '$resource', '$location', '$routeParams',
 						document.getElementById("predict").innerHTML = data.predict;
 						if (data.predict == "Good") {
 							document.getElementById("predict").setAttribute("color", "green");
-						} else if (account.predict == "OK") {
+						} else if (data.predict == "OK") {
 							document.getElementById("predict").setAttribute("color", "#ecc400");
 						} else {
 							document.getElementById("predict").setAttribute("color", "red");
@@ -414,7 +423,9 @@ app.controller('ViewCtrl', ['$scope', '$resource', '$location', '$routeParams',
 						var td_val = document.createElement("td");
 						var name = document.createTextNode(data.list[prop]);
 						var val = document.createTextNode(grade[data.list[prop]]);
-						td_name.appendChild(name);
+						var b = document.createElement("B");
+						b.appendChild(name);
+						td_name.appendChild(b);
 						td_val.appendChild(val);
 						tr.appendChild(td_name);
 						tr.appendChild(td_val);
