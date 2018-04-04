@@ -27,7 +27,7 @@ const multerConfig = {
 	function readCourse(callback) {
 		fs.readFile("ml_scripts/models/recent-course.txt", function(err, data) {
 			if (err) {
-				throw err;
+				return console.log(err);
 			}
 			callback(uint8ToString(data));
 		});
@@ -35,7 +35,7 @@ const multerConfig = {
 	function readParams(callback) {
 	    fs.readFile("ml_scripts/models/params.txt", function(err, data) {
 		    if (err) {
-			    throw err;
+			    return console.log(err);
 			} 
 			callback(uint8ToString(data));
 		});
@@ -57,7 +57,7 @@ router.post('/recent', function(req, res) {
 	fs = require('fs');
 	fs.writeFile("ml_scripts/models/recent-course.txt", wrapObj.course, function(err) {
 		if (err)
-			throw err;
+			return console.log(err);
 		else {
 			console.log("Course saved.");
 		}
@@ -72,7 +72,7 @@ router.get('/recent', function(req, res) {
 	function readCourse(callback) {
 		fs.readFile("ml_scripts/models/recent-course.txt", function(err, data) {
 			if (err)
-				throw err;
+				return console.log(err);
 			callback(uint8ToString(data));
 		});
 	}
@@ -104,28 +104,28 @@ router.post('/', function(req, res) {
         var fs = require('fs');
 /*		fs.writeFile("ml_scripts/models/recent-course.txt", wrapObj.course, function(err) {
 			if (err) {
-				console.log(err);
+				return return console.log(err);
 			} else {
 				console.log("Course recorded.");
 			}
 		});*/
 		fs.writeFile("ml_scripts/models/" + wrapObj.course + "/noOfModels.txt", wrapObj.noOfModels, function(err) {
             if (err) {
-                console.log(err);
+                return console.log(err);
             } else {
                 console.log("#Models saved.");
             }
         });
         fs.writeFile("ml_scripts/models/" + wrapObj.course + "/params.txt", wrapObj.params, function(err) {
             if (err) {
-                console.log(err);
+                return console.log(err);
             } else {
                 console.log("Params saved.");
             }
         });
 		fs.writeFile("ml_scripts/data/" + wrapObj.course + "/grade.json", wrapObj.grades, function(err) {
 			if (err) {
-				console.log(err);
+				return console.log(err);
 			} else {
 				console.log("Grade.json created.");
 			}

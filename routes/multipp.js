@@ -9,7 +9,7 @@ router.post('/properties', function(req, res) {
 	function readProperties(callback) {
 		fs.readFile("temp/" + req.body.filename + ".txt", function(err, data) {
 			if (err)
-				throw err;
+				return console.log(err);
 			callback(uint8ToString(data));
 		});
 	}

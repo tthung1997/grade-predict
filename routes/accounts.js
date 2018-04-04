@@ -7,7 +7,7 @@ var db = monk('localhost:27017/grade');
 router.get('/', function(req, res) {
     var collection = db.get('accounts');
     collection.find({}, function(err, accounts) {
-        if (err) throw err;
+        if (err) return console.log(err);
         res.json(accounts);
     });
 });
@@ -15,7 +15,7 @@ router.get('/', function(req, res) {
 router.get('/:username', function(req, res) {
     var collection = db.get('accounts');
     collection.findOne({ Username: req.params.username }, function(err, account) {
-        if (err) throw err;
+        if (err) return console.log(err);
         if (account == null) {
 			return res.json({});
 		}
@@ -53,7 +53,7 @@ router.get('/:username', function(req, res) {
 router.get('/:nuid', function(req, res) {
     var collection = db.get('accounts');
     collection.findOne({ NUID: req.params.nuid }, function(err, account) {
-        if (err) throw err;
+        if (err) return console.log(err);
         if (account == null) {
 			return res.json({});
 		}
@@ -109,7 +109,7 @@ router.post('/', function(req, res) {
         "midterm" : Number(req.body.midterm),
         "final" : Number(req.body.final)
     }}, function(err, account) {
-    	if (err) throw err;
+    	if (err) return console.log(err);
     	res.json(account);
     });
 });
@@ -119,7 +119,7 @@ router.post('/', function(req, res) {
 	var collection = db.get('accounts');
 	console.log(req.body);
 	collection.insert(req.body, {w: 1}, function(err, result) {
-		if (err) throw err;
+		if (err) return console.log(err);
 		//console.log(result);
 		res.json(result);
 	});

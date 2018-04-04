@@ -7,7 +7,7 @@ var db = monk('localhost:27017/grade');
 router.post('/', function(req, res) {
     var collection = db.get(req.body.course);
     collection.findOne({ NUID: req.body.nuid }, function(err, account) {
-        if (err) throw err;
+        if (err) return console.log(err);
         if (account == null) {
 			return res.json({});
 		}
@@ -21,7 +21,7 @@ router.get('/csce156', function(req, res) {
 	};
 	var fs = require('fs');
 	fs.readFile('ml_scripts/data/csce156/grade.json', function(err, data) {
-		if (err) throw err;
+		if (err) return console.log(err);
 		var wrapObj = {
 			grades: uint8ToString(data)
 		};
@@ -31,8 +31,8 @@ router.get('/csce156', function(req, res) {
 
 router.post('/csce156', function(req, res) {
     var collection = db.get('csce156');
-    collection.update({ NUID: req.body.nuid }, { $set: req.body.grades }, function(err, account) {
-    	if (err) throw err;
+    collection.update({ NUID: req.body.nuid }, { $set: req.body.grades }, { upsert : true }, function(err, account) {
+    	if (err) return console.log(err);
     	const spawn = require('child_process').spawn;
     	var params = ['ml_scripts/predict.py', 'csce156'];
     	for(var index in req.body.grades) {
@@ -62,7 +62,7 @@ router.get('/csce235', function(req, res) {
 	};
 	var fs = require('fs');
 	fs.readFile('ml_scripts/data/csce235/grade.json', function(err, data) {
-		if (err) throw err;
+		if (err) return console.log(err);
 		var wrapObj = {
 			grades: uint8ToString(data)
 		};
@@ -75,8 +75,8 @@ router.post('/csce235', function(req, res) {
     var uint8ToString = function(data) {
 		return String.fromCharCode.apply(null, data);
 	};
-    collection.update({ NUID: req.body.nuid }, { $set: req.body.grades }, function(err, account) {
-    	if (err) throw err;
+    collection.update({ NUID: req.body.nuid }, { $set: req.body.grades }, { upsert : true }, function(err, account) {
+    	if (err) return console.log(err);
     	const spawn = require('child_process').spawn;
     	var params = ['ml_scripts/predict.py', 'csce235'];
     	for(var index in req.body.grades) {

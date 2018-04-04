@@ -86,7 +86,7 @@ app.controller('RegisterCtrl', ['$scope', '$resource', '$location',
 			}
 			var Account = $resource('/api/accounts/:username');
 			Account.get({username: $scope.username}, function(account) {
-				if (account.username != undefined) {
+				if (account.Username != undefined) {
 					$scope.message = "Username has already existed!";
 					return;
 				}
@@ -398,6 +398,7 @@ app.controller('ViewCtrl', ['$scope', '$resource', '$location', '$routeParams',
 							validGrade[data.list[prop]] = -1;
 						}
 					}
+					validGrade["NUID"] = wrapObj.nuid;
 					console.log(validGrade);
 					Grades.save({nuid: wrapObj.nuid, grades: validGrade}, function(data) {
 						document.getElementById("predict").innerHTML = data.predict;
