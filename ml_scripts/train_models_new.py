@@ -49,6 +49,7 @@ if ('Section' in inpgrade.columns.values):
     inpgrade = inpgrade.drop('Section', axis = 1)
 inpgrade.dropna(axis = 1, how = 'all', inplace = True)
 inpgrade.fillna(0, inplace = True)
+inpgrade['Full name'] = inpgrade.index.values
 chosen = inpgrade.select_dtypes(include='float64').columns.values
 #fileO = open("ml_scripts/data/" + course + "/grade.json", "w")
 #fileO.write(inpgrade.to_json(orient="records"))

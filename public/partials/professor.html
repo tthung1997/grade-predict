@@ -8,34 +8,70 @@
 </style>
 
 <div ng-app = "Grade" ng-controller = "ProfCtrl" style = "text-align:center">
-	<h1 style = "max-width:600px;margin:auto;text-align:center;width:80%;background-color:#8f8f8f;color:white;padding:10px">Dr. {{fullname}}</h1>
+	<h1 style = "max-width:1200px;margin:auto;text-align:center;width:100%;background-color:#8f8f8f;color:white;padding:10px">Dr. {{fullname}}</h1>
 	<a href = "/#/">Logout</a>
 	<p>
 		{{message}}
 	</p>
-	<div style = "background-color:#f3f3f3;max-width:600px;width:80%;margin:auto;padding:0 20px 20px 20px;border:2px solid grey;border-radius:5px">
-		<h4>Profile:</h4>
-		<table border = "0" id = "profileTable" style = "margin:auto">
-		</table>
-	</div>
-	<div style = "background-color:#f3f3f3;max-width:600px;width:80%;margin:10px auto;padding:20px 20px 20px 20px;border:2px solid grey;border-radius:5px">
-		<div>
-			<label style = "margin:0px 10px 30px 0px;width:120px;text-align:right">Upload grade for</label>
-			<select ng-model = "course" style = "width: 150px; height: 30px;">
-				<option disable selected value>Choose course...</option>
-				<option value = "csce156">CSCE156</option>
-				<option value = "csce235">CSCE235</option>
-			</select>
-			<button class = "btn btn-primary" style = "width:80px;margin-left:10px" ng-click = "upload()">Upload</button>
+	<div style = "max-width:1200px;margin:auto;width:100%">
+		<div style = "width:30%;float:left">
+			<div style = "display:block;background-color:#f3f3f3;max-width:600px;width:100%;min-width:320px;margin:auto;padding:0 20px 20px 20px;border:2px solid grey;border-radius:5px">
+				<h4>Profile:</h4>
+				<table border = "0" id = "profileTable" style = "margin:auto">
+				</table>
+			</div>
+			<div style = "background-color:#f3f3f3;max-width:600px;width:100%;min-width:320px;margin:10px auto;padding:20px 20px 20px 20px;border:2px solid grey;border-radius:5px">
+				<div>
+					<label style = "width:100%;text-align:center">Upload grade for</label>
+					<select ng-model = "course" style = "width: 150px; height: 30px;">
+						<option disable selected value>Choose course...</option>
+						<option value = "csce156">CSCE 156</option>
+						<option value = "csce235">CSCE 235</option>
+					</select>
+					<button class = "btn btn-primary" style = "width:80px;margin-left:10px" ng-click = "upload()">Upload</button>
+				</div>
+				<div>
+					<label style = "width:100%;text-align:center">Rerun model for</label>
+					<select class = "custom-select mb-2 mr-sm-2 mb-sm-0" ng-model = "courseToRun" style = "width: 150px; height: 30px;">
+						<option disable selected value>Choose course...</option>
+						<option value = "csce156">CSCE156</option>
+						<option value = "csce235">CSCE235</option>
+					</select>
+					<button class = "btn btn-primary" style = "width:80px;margin-left:10px" ng-click = "rerunModel()">Run</button>
+				</div>
+				<div>
+					<button class = "btn btn-danger" style = "width:245px;margin-top:10px" ng-click = "predict()">Generate prediction</button>
+				</div>
+			</div>
 		</div>
-		<div>
-			<label style = "width:120px;text-align:right;margin-right:10px">Rerun model for</label>
-			<select class = "custom-select mb-2 mr-sm-2 mb-sm-0" ng-model = "courseToRun" style = "width: 150px; height: 30px;">
-				<option disable selected value>Choose course...</option>
-				<option value = "csce156">CSCE156</option>
-				<option value = "csce235">CSCE235</option>
-			</select>
-			<button class = "btn btn-primary" style = "width:80px;margin-left:10px" ng-click = "rerunModel()">Run</button>
+		<div style = "float:right;width:68%;padding-left:5px">
+			<div style = "min-height:100px;overflow:hidden;display:block;background-color:#f3f3f3;width:100%;margin:auto;padding:0 20px 20px 20px;border:2px solid grey;border-radius:5px">
+				<h4>Statistics:</h4>
+				<div style = "margin-bottom:15px">
+					<label>Show statistics for</label>
+					<select ng-model = "courseStat" style = "width:150px;height:30px;" ng-change = "getLists()">
+						<option disable selected value>Choose course...</option>
+						<option value = "csce156">CSCE 156</option>
+						<option value = "csce235">CSCE 235</option>
+					</select>
+				</div>
+				<p id = "counter"></p>
+				<table border = "0" id = "goodList" style = "width:32.5%;margin-right:10px;float:left;">
+					<tr>
+						<th style = "text-align:center;background-color:green;color:white;border-color:rgba(255,255,255,0)">Good</th>
+					</tr>
+				</table>
+				<table border = "0" id = "okList" style = "width:32.5%;margin-right:10px;float:left;">
+					<tr>
+						<th style = "text-align:center;background-color:#ecc400;color:white;border-color:rgba(255,255,255,0)">OK</th>
+					</tr>
+				</table>
+				<table border = "0" id = "hrList" style = "width:32.5%;float:left;">
+					<tr>
+						<th style = "text-align:center;background-color:red;color:white;border-color:rgba(255,255,255,0)">High-risk</th>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</div>
 </div>

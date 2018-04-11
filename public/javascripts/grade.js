@@ -187,9 +187,9 @@ app.controller('RegisterCtrl', ['$scope', '$resource', '$location',
 app.controller('ProfCtrl', ['$scope', '$resource', '$location', '$routeParams',
     function($scope, $resource, $location, $routeParams) {
 		var Account = $resource('/api/accounts/:username');
+		var Properties = $resource('/api/multipp/properties');
 		Account.get({username: $routeParams.username}, function(account) {
 			$scope.fullname = account["Full name"];
-			var Properties = $resource('/api/multipp/properties');
 			Properties.save({filename: "UserInfo"}, function(data) {
 				console.log(data.list);
 				var table = document.getElementById("profileTable");
@@ -212,30 +212,107 @@ app.controller('ProfCtrl', ['$scope', '$resource', '$location', '$routeParams',
 				}
 			});
 		});
-//		var Recent = $resource('/api/models/recent');
-		$scope.rerunModel= function() {
-			if ($scope.courseToRun == undefined) {
+		var addRow = function(table, fullname) {
+			var tr = document.createElement("tr");
+			var td = document.createElement("td");
+			var name = document.createTextNode(fullname);
+			td.appendChild(name);
+			tr.appendChild(td);
+			table.appendChild(tr);
+		};
+		var resetTable = function(table) {
+			while (table.children[1]) {
+				table.removeChild(table.children[1]);
+			}
+		};
+		$scope.getLists = function() {
+			document.getElementById('counter').innerHTML = '';
+			var option = $scope.courseStat;
+			var goodList = document.getElementById('goodList');
+			var okList = document.getElementById('okList');
+			var hrList = document.getElementById('hrList');
+			var counter = [0, 0, 0];
+			resetTable(goodList);
+			resetTable(okList);
+			resetTable(hrList);
+			if (option == "") return;
+			var Students = $resource('/api/grades/' + option + '/db');
+			Students.query(function(data) {
+				for(var i in data) {
+					var student = data[i];
+					if (student.Predict == "Good") {
+						addRow(goodList, student["Full name"]);
+						counter[0] += 1;
+					}
+					else if (student.Predict == "OK") {
+						addRow(okList, student["Full name"]);
+						counter[1] += 1;
+					}
+					else if (student.Predict == "High-risk") {
+						addRow(hrList, student["Full name"]);
+						counter[2] += 1;
+					}
+				}
+				document.getElementById('counter').innerHTML = 'There are ' + counter[0].toString() + ' Good students, ' + counter[1].toString() + ' OK students, and ' + counter[2].toString() + ' High-risk students.';
+			});
+		}
+		$scope.rerunModel = function() {
+			if ($scope.courseToRun == "") {
 				$scope.message = "No course is chosen.";
 				return;
 			}
 			var Model = $resource('/api/models');
 			Model.save({course: $scope.courseToRun}, function (newdata) {
+				var i;
+				for (i = 0; i < 10000; i++) {console.log("done");}
 				$scope.message = "Finished!";
 			});
 		};
-        $scope.upload = function() {
-			if ($scope.course == undefined) {
+		$scope.predict = function() {
+			if ($scope.courseToRun == "") {
 				$scope.message = "No course is chosen.";
 				return;
 			}
-//			Recent.save({course: $scope.course}, function(data) {
-//				console.log("Done saving to /recent.");
-//			});
-//			if (typeof(Storage) !== "undefined") {
-//				localStorage.setItem("profId", $routeParams.username);
-//			} else {
-//				console.log("storage is not supported");
-//			}
+			var Grades = $resource('/api/grades/' + $scope.courseToRun);
+			Grades.get(function(jsonGrade) {
+				var fullGrade = JSON.parse(jsonGrade.grades);
+				var wrapObj = {
+					grade: [],
+					students: 0,
+					fields: 0
+				};
+				Properties.save({filename: $scope.courseToRun}, function(data) {
+					for(var i in fullGrade) {
+						wrapObj.students++;
+						wrapObj.fields = 0;
+						var thisGrade = fullGrade[i];
+						var validGrade = {};
+						for(var prop in data.list) {
+							wrapObj.fields++;
+							if (thisGrade[data.list[prop]] != undefined) {
+								validGrade[data.list[prop]] = thisGrade[data.list[prop]];
+							}
+							else {
+								validGrade[data.list[prop]] = -1;
+							}
+						}
+						wrapObj.fields++;
+						validGrade.NUID = thisGrade["SIS User ID"].toString();
+						wrapObj.fields++;
+						validGrade["Full name"] = thisGrade["Full name"];
+						wrapObj.grade.push(validGrade);
+					}
+					Grades.save(wrapObj, function(data) {
+						$scope.message = "Predictions are generated!"
+					});
+				});
+			});
+		};
+        $scope.upload = function() {
+			if ($scope.course == "") {
+				$scope.message = "No course is chosen.";
+				return;
+			}
             $location.path('/professor/' + $routeParams.username + '/uploadGrade/' + $scope.course);
         };
     }
@@ -279,73 +356,6 @@ app.controller('StudCtrl', ['$scope', '$resource', '$routeParams', '$location',
 					table.appendChild(tr);
 				}
 			});
-            /*if ($scope.account.hw1 == -1) {
-                $scope.account["hw1"] = "--";
-            }
-            if ($scope.account.hw2 == -1) {
-                $scope.account.hw2 = "--";
-            }
-            if ($scope.account.hw3 == -1) {
-                $scope.account.hw3 = "--";
-            }
-            if ($scope.account.hw4 == -1) {
-                $scope.account.hw4 = "--";
-            }
-            if ($scope.account.hw5 == -1) {
-                $scope.account.hw5 = "--";
-            }
-            if ($scope.account.hw6 == -1) {
-                $scope.account.hw6 = "--";
-            }
-            if ($scope.account.q1 == -1) {
-                $scope.account.q1 = "--";
-            }
-            if ($scope.account.q2 == -1) {
-                $scope.account.q2 = "--";
-            }
-            if ($scope.account.q3 == -1) {
-                $scope.account.q3 = "--";
-            }
-            if ($scope.account.q4 == -1) {
-                $scope.account.q4 = "--";
-            }
-            if ($scope.account.q5 == -1) {
-                $scope.account.q5 = "--";
-            }
-            if ($scope.account.q6 == -1) {
-                $scope.account.q6 = "--";
-            }
-            if ($scope.account.q7 == -1) {
-                $scope.account.q7 = "--";
-            }
-            if ($scope.account.q8 == -1) {
-                $scope.account.q8 = "--";
-            }
-            if ($scope.account.q9 == -1) {
-                $scope.account.q9 = "--";
-            }
-            if ($scope.account.q10 == -1) {
-                $scope.account.q10 = "--";
-            }
-            if ($scope.account.midterm == -1) {
-                $scope.account.midterm = "--";
-            }
-            if ($scope.account.final == -1) {
-                $scope.account.final = "--";
-            }
-            document.getElementById("predict").innerHTML = account.predict;
-            if (account.predict == "2") {
-                document.getElementById("predict").innerHTML = "Good";
-                document.getElementById("predict").setAttribute("color", "green");
-            } else if (account.predict == "1") {
-                document.getElementById("predict").innerHTML = "OK";
-                document.getElementById("predict").setAttribute("color", "#ecc400");
-            } else {
-                document.getElementById("predict").innerHTML = "High-risk";
-                document.getElementById("predict").setAttribute("color", "red");
-            }
-            $scope.available = (80).toFixed(2);
-            $scope.total = ((account.hw1 + account.hw2 + account.hw3) / 300.0 * 55 + (account.q1 + account.q2 + account.q3) / 3.0 + account.midterm).toFixed(2);*/
         });
 		$scope.viewGrade = function() {
 			if ($scope.course == undefined) {
@@ -380,7 +390,6 @@ app.controller('ViewCtrl', ['$scope', '$resource', '$location', '$routeParams',
 				for(var index in fullGrade) {
 					if (fullGrade[index]["SIS User ID"] == $scope.account.NUID) {
 						thisGrade = fullGrade[index];
-						console.log(thisGrade);
 						break;
 					}
 				}
@@ -388,7 +397,7 @@ app.controller('ViewCtrl', ['$scope', '$resource', '$location', '$routeParams',
 					$scope.message = "Cannot find your grade!";
 					return;
 				}
-				Properties.save({filename: wrapObj.course}, function(data) {
+				/*Properties.save({filename: wrapObj.course}, function(data) {
 					var validGrade = {};
 					for(var prop in data.list) {
 						if (thisGrade[data.list[prop]] != undefined) {
@@ -399,17 +408,32 @@ app.controller('ViewCtrl', ['$scope', '$resource', '$location', '$routeParams',
 						}
 					}
 					validGrade["NUID"] = wrapObj.nuid;
-					console.log(validGrade);
 					Grades.save({nuid: wrapObj.nuid, grades: validGrade}, function(data) {
 						document.getElementById("predict").innerHTML = data.predict;
+						validGrade["Predict"] = data.predict;
 						if (data.predict == "Good") {
 							document.getElementById("predict").setAttribute("color", "green");
 						} else if (data.predict == "OK") {
 							document.getElementById("predict").setAttribute("color", "#ecc400");
 						} else {
 							document.getElementById("predict").setAttribute("color", "red");
-						}									
+						}								
+						var Predicts = $resource('/api/grades/' + $routeParams.course + "/predict");
+						Predicts.save({nuid: wrapObj.nuid, grades: validGrade}, function(data) {
+							console.log("Prediction is saved!");
+						});	
 					});
+				});*/
+				var Predicts = $resource('/api/grades/' + $routeParams.course + '/:nuid');
+				Predicts.get({nuid: $scope.account.NUID}, function(data) {
+					document.getElementById("predict").innerHTML = data.Predict;
+					if (data.Predict == "Good") {
+						document.getElementById("predict").setAttribute("color", "green");
+					} else if (data.Predict == "OK") {
+						document.getElementById("predict").setAttribute("color", "#ecc400");
+					} else {
+						document.getElementById("predict").setAttribute("color", "red");
+					}					
 				});
 			});
 			Grade.save(wrapObj, function(grade) {

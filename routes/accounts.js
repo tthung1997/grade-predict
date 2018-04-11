@@ -12,6 +12,14 @@ router.get('/', function(req, res) {
     });
 });
 
+router.get('/students', function(req, res) {
+    var collection = db.get('accounts');
+    collection.find({Role: "Student"}, function(err, accounts) {
+        if (err) return console.log(err);
+        return res.json(accounts);
+    });
+});
+
 router.get('/:username', function(req, res) {
     var collection = db.get('accounts');
     collection.findOne({ Username: req.params.username }, function(err, account) {
